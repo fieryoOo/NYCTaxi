@@ -1,0 +1,12 @@
+# GMT common arguments shelf
+-Ba0.1f0.02:.Average Trip Distance (km):WeSn
+-Jm286.1/30
+-JN286.1/10
+-R285.9/286.3/40.58/40.90
+-X4.5
+-x12
+-Y5.5
+-jN286.1/10
+EOF
+
+EOF
