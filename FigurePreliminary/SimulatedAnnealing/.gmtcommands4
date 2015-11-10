@@ -1,0 +1,8 @@
+# GMT common arguments shelf
+-Ba0.05f0.01:.Demand model (with 0.3 km grid size):WeSn
+-JN286.02/10
+-R285.96/286.08/40.68/40.84
+-X4.5
+-Y5.5
+-jN286.02/10
+EOF
