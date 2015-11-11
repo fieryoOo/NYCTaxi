@@ -1,6 +1,0 @@
-http://chriswhong.com/open-data/foil_nyc_taxi/
-https://github.com/fieryoOo/code/blob/master/Figures/Fig1.pdf
-https://github.com/fieryoOo/code/blob/master/Figures/Fig2.pdf
-3600
-downloaded
-

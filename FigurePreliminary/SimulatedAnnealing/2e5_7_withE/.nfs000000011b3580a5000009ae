@@ -1,0 +1,1 @@
+convert -quality 100 -delay 50 -loop 0 -scale 100% `ls ../../../run_SA/2e5_7_with_Energy/loc_tripdis_date_0.txt_model_iter?_?.ps` animation.gif

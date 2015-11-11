@@ -3,6 +3,19 @@
 #include <iostream>
 #include <string>
 
+template < class T >
+void OutputV( const std::vector<T>& dataV, const std::string& fname, const bool app = false ) {
+	std::ofstream fout;
+	if( app ) fout.open( fname, std::ofstream::app );
+	else fout.open( fname );
+	if( ! fout )
+		throw std::runtime_error("Badfile: open "+fname);
+
+	if( app )fout<<"\n\n";
+	for( const auto& t : dataV )
+		fout << t << "\n";
+}
+
 
 int main(int argc, char* argv[]) {
 	if( argc!=3 && argc!=4 ) {
@@ -28,22 +41,26 @@ int main(int argc, char* argv[]) {
 		if( ndays>0 && ndays!=1.0 ) pd.Mul( 1.0/ndays );
 	}
 
-	// 
-	int nsearch = 200000, Tfactor = 0;
-	float Tinit = 100.;
-	float alpha = Searcher::Alpha(nsearch, Tfactor);
-	//auto SIV = Searcher::MonteCarlo<ModelInfo>( ms, eka, nsearch, std::cout );
-	int niter = 7; 
+	// SA params
+	std::string name_mod = fdata+"_model";
+	int niter = 7, nout = 10;
+	int ns_out = 3000, ns_iter = ns_out*nout, ns_tot = ns_iter*niter;
+	float Tinit = 100., Tfactor = 0;
+	float alpha = Searcher::Alpha(ns_out, Tfactor);
 	float blockperc = 0.5, APstep = 300.;
 	for(int iter=0; iter<niter; iter++) {
-		//ms.dump( fdata + "_model_iter" + std::to_string(iter) );
 		ms.SetBlockPerc(blockperc, APstep);
-		// output accepted, do not save into vector
-		Searcher::SimulatedAnnealing< MapGrids<double, GaussianParams> >( ms, pd, nsearch/niter, alpha, Tfactor, std::cout, 1, false );
+		for(int iout=0; iout<nout; iout++) {
+			ms.dump( name_mod + "_iter" + std::to_string(iter) + "_" + std::to_string(iout) );
+			// output accepted, save into vector, istart = nsearch*iout
+			auto SIV = Searcher::SimulatedAnnealing< MapGrids<double, GaussianParams> >( 
+						  ms, pd, ns_out, alpha, Tfactor, std::cout, 1, true, ns_iter*iter+ns_out*iout );
+			OutputV( SIV, name_mod+".SAlog", true );	// append to file
+		}
 		blockperc *= 0.5; APstep *= 0.5;
 	}
 
-	ms.dump( fdata + "_model" );
+	ms.dump( name_mod );
 
 	return 0;
 }
