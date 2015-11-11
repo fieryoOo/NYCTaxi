@@ -1,5 +1,22 @@
 #!/bin/bash
 
+PlotText() {
+   local _REG=$1
+   local _text=$2
+   local _XS=$3
+   local _YS=$4
+
+   #local _lb=('a' 'b' 'c' 'd' 'e' 'f')
+   #local _title=`echo ${_text} | awk -v lb=${_lb[ifile]} '{print "("lb")  "$0}'`
+   local _title=$_text
+   echo ${_title}
+   local _llon=`echo $_REG | sed s/'\-R'/''/ | awk -F/ -v xs=$_XS '{print $1+xs*($2-$1)}'`
+   local _ulat=`echo $_REG | sed s/'\-R'/''/ | awk -F/ -v ys=$_YS '{print $4+ys*($4-$3)}'`
+   echo $_title | awk -v llon=$_llon -v ulat=$_ulat '{print llon, ulat, "15. 0. 20 LT", $0}' | pstext -R -J -Wlightgray,O3 -O -K -N >> $psout
+   #echo $_title | awk -v llon=$_llon -v ulat=$_ulat '{print llon, ulat, "12. 0. 20 LT", $0}' | pstext -R -J -O -K -N >> $psout
+   let ifile++
+}
+
 PlotMap() {
 	local _fin=$1
 	local _bdis=$2
@@ -49,7 +66,8 @@ if [ $# != 1 ]; then
 fi
 
 fin=$1
-fcpt=/projects/yeti4009/DataIncubator/Project/model_daily.cpt
+no=`echo $fin | awk -F'.txt' '{print $1}' | awk -F'_' '{print $NF}'`
+fcpt=/projects/yeti4009/DataIncubator/NYCTaxi/model_daily.cpt
 
 #lon_range="285.9 286.3"; dlon=0.01
 #lat_range="40.58 40.90"; dlat=0.01
@@ -74,6 +92,7 @@ REG=`echo $lon_range $lat_range | awk '{print "-R"$1"/"$2"/"$3"/"$4}'`
 
 pwd | psxy $REG $SCA -B${dlab}:."Demand model (with 0.3 km grid size)":WeSn -X4.5 -Y5.5 -K -P > $psout
 PlotMap $fin $bdis $fcpt
+PlotText $REG $no 0.01
 
 # finalize
 pwd | psxy -R -J -K -O >> $psout
